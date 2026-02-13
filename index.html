@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест: Какой ты тип художника?</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #121212; /* Чуть темнее фон */
+            color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .container {
+            background-color: #1e1e24; /* Темно-фиолетовый оттенок серого */
+            padding: 2.5rem;
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.7);
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #333;
+        }
+        
+        /* --- ПРОГРЕСС-БАР --- */
+        .progress-wrapper {
+            position: relative;
+            margin-bottom: 30px;
+            margin-top: 10px;
+            height: 20px; 
+        }
+        
+        .progress-track {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            left: 6px; 
+            right: 6px;
+            height: 4px;
+            background-color: #333;
+            z-index: 0;
+            border-radius: 2px;
+        }
+
+        /* ОСНОВНОЙ ЦВЕТ: Фиолетовый неон */
+        .progress-fill {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            left: 6px;
+            height: 4px;
+            background-color: #bc13fe; /* Фиолетовый */
+            z-index: 0;
+            width: 0%; 
+            max-width: calc(100% - 12px); 
+            transition: width 0.4s ease;
+            box-shadow: 0 0 12px #bc13fe;
+            border-radius: 2px;
+        }
+
+        .checkpoints {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            z-index: 1; 
+            align-items: center;
+            height: 100%;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            background-color: #333;
+            border: 3px solid #1e1e24;
+            border-radius: 50%;
+            transition: 0.3s;
+            box-sizing: content-box; 
+        }
+        
+        .dot.active {
+            background-color: #bc13fe;
+            transform: scale(1.4);
+            box-shadow: 0 0 15px rgba(188, 19, 254, 0.6);
+        }
+        
+        .dot.completed {
+            background-color: #bc13fe;
+        }
+
+        .dot.finish-dot {
+            border-color: #fff; 
+            width: 14px;
+            height: 14px;
+        }
+        .dot.finish-dot.active {
+            background-color: #fff;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.9);
+        }
+
+        /* --- ТЕКСТЫ И КНОПКИ --- */
+        h2 { 
+            color: #fff; 
+            margin-bottom: 25px; 
+            font-size: 24px;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1.3;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+        .answers-box {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 18px;
+            background-color: #2d2d35;
+            border: 2px solid transparent;
+            color: #e0e0e0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 16px;
+            text-align: left;
+            font-weight: 500;
+            position: relative;
+            overflow: hidden;
+        }
+        .btn:hover {
+            background-color: #3a3a45;
+            border-color: #bc13fe; /* Фиолетовая обводка */
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(188, 19, 254, 0.15);
+        }
+        .btn:active {
+            transform: scale(0.98);
+        }
+        
+        .back-btn {
+            background: none;
+            border: none;
+            color: #666;
+            cursor: pointer;
+            padding: 10px;
+            font-size: 14px;
+            align-self: flex-start;
+            margin-top: 20px;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            visibility: hidden;
+        }
+        .back-btn:hover {
+            color: #bc13fe;
+        }
+
+        /* Результаты */
+        .result-box {
+            display: none;
+            animation: fadeIn 0.6s ease;
+        }
+        .result-icon {
+            font-size: 64px;
+            margin-bottom: 15px;
+            display: inline-block;
+            animation: bounce 2s infinite;
+        }
+        .result-header {
+            font-size: 18px;
+            color: #888;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .result-title {
+            font-size: 32px;
+            font-weight: bold;
+            color: #bc13fe; /* Фиолетовый заголовок */
+            margin-bottom: 20px;
+            text-shadow: 0 0 25px rgba(188, 19, 254, 0.4);
+            line-height: 1.2;
+        }
+        .result-desc {
+            font-size: 17px;
+            line-height: 1.6;
+            color: #ccc;
+            margin-bottom: 30px;
+            background: rgba(0,0,0,0.2);
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 3px solid #bc13fe;
+        }
+        .restart-btn {
+            background-color: #bc13fe;
+            color: #fff;
+            border: none;
+            font-weight: bold;
+            text-align: center;
+            font-size: 18px;
+            box-shadow: 0 4px 15px rgba(188, 19, 254, 0.3);
+        }
+        .restart-btn:hover {
+            background-color: #d15eff;
+            color: #fff;
+            box-shadow: 0 0 25px rgba(188, 19, 254, 0.6);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container" id="quiz-container">
+    
+    <div class="progress-wrapper">
+        <div class="progress-track"></div>
+        <div class="progress-fill" id="progress-fill"></div>
+        <div class="checkpoints" id="checkpoints"></div>
+    </div>
+
+    <h2 id="question">Загрузка...</h2>
+    
+    <div id="answers" class="answers-box"></div>
+
+    <button class="back-btn" id="back-btn" onclick="prevStep()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        Назад
+    </button>
+</div>
+
+<div class="container result-box" id="result-container">
+    <div class="result-icon">🎨</div>
+    <div class="result-header">Твой творческий архетип:</div>
+    <div class="result-title" id="result-role">Роль</div>
+    <div class="result-desc" id="result-text">Описание</div>
+    <button class="btn restart-btn" onclick="location.reload()">Пройти заново</button>
+</div>
+
+<script>
+    // Вопросы для определения типа художника
+    const questions = [
+        {
+            text: "Перед тобой пустой «холст». Твоя первая мысль?",
+            options: [
+                { text: "Набросаю пару хаотичных пятен, посмотрю, на что похоже", scores: { concept: 2, exp: 1 } },
+                { text: "Сначала сетка перспективы и композиционные линии", scores: { detail: 2, tech: 1 } },
+                { text: "Вспомню историю персонажа, которого хочу нарисовать", scores: { story: 2, concept: 1 } }
+            ]
+        },
+        {
+            text: "Что тебя больше всего раздражает в процессе?",
+            options: [
+                { text: "Скучная отрисовка мелких деталей и рутина", scores: { concept: 2, exp: 1 } },
+                { text: "Когда рука дрогнула и линия вышла кривой", scores: { detail: 2 } },
+                { text: "Когда картинка красивая, но «мертвая» (без эмоций)", scores: { story: 2 } }
+            ]
+        },
+        {
+            text: "Какую папку с референсами ты соберешь перед работой?",
+            options: [
+                { text: "Пару картинок для настроения, остальное из головы", scores: { concept: 2, exp: 1 } },
+                { text: "Огромную доску (PureRef): пуговицы, текстуры, свет", scores: { detail: 2, tech: 1 } },
+                { text: "Кадры из фильмов, позы, выражения лиц", scores: { story: 2 } }
+            ]
+        },
+        {
+            text: "Работа почти готова. Твои действия?",
+            options: [
+                { text: "Добавлю необычный фильтр, шум или глитч-эффект", scores: { exp: 3 } },
+                { text: "Увеличу зум на 500% и поправлю каждый пиксель", scores: { detail: 3 } },
+                { text: "Поиграю с цветом, чтобы усилить атмосферу", scores: { story: 2, concept: 1 } }
+            ]
+        },
+        {
+            text: "В чем твоя главная суперсила?",
+            options: [
+                { text: "Я могу генерировать 10 идей в минуту", scores: { concept: 3 } },
+                { text: "У меня железное терпение и усидчивость", scores: { detail: 3 } },
+                { text: "Мои работы вызывают у людей эмоции", scores: { story: 3 } }
+            ]
+        }
+    ];
+
+    const resultsData = {
+        concept: { title: "Генератор Идей (Visionary)", desc: "Ты — искра. Тебе скучно долго сидеть над одной картинкой, ведь в голове уже зреют пять новых. Твоя стихия — скетчинг, поиск форм и концепт-арт. Ты ценишь свежесть мысли выше идеальной прорисовки." },
+        detail: { title: "Перфекционист (Realist)", desc: "Ты — мастер качества. Ты видишь мир в высоком разрешении. Твои работы поражают проработкой текстур, света и материалов. Ты не успокоишься, пока каждая деталь не будет выглядеть убедительно." },
+        story: { title: "Рассказчик (Storyteller)", desc: "Ты — режиссер статичного кадра. Для тебя техника вторична, главное — история и эмоция. Ты умеешь создавать персонажей, которым хочется сопереживать, и миры, в которые веришь." },
+        exp: { title: "Экспериментатор (Maverick)", desc: "Ты — бунтарь. Тебе тесно в рамках одного стиля. Ты смешиваешь 2D и 3D, используешь нейросети, фотобаш и странные кисти. Твои работы могут выглядеть странно, но они всегда уникальны." },
+        tech: { title: "Техно-Маг (Technical Artist)", desc: "Ты любишь порядок. Тебе важно не только «красиво», но и «правильно». Ты получаешь удовольствие от оптимизации, процедурной генерации и понимания того, как все устроено изнутри." }
+    };
+
+    let currentStep = 0;
+    let userScores = { concept: 0, detail: 0, story: 0, exp: 0, tech: 0 };
+    let scoreHistory = [];
+
+    function initProgress() {
+        const container = document.getElementById("checkpoints");
+        container.innerHTML = "";
+        
+        for(let i = 0; i < questions.length; i++) {
+            const dot = document.createElement("div");
+            dot.className = "dot";
+            dot.id = `dot-${i}`;
+            if (i === questions.length - 1) {
+                dot.classList.add("finish-dot");
+            }
+            container.appendChild(dot);
+        }
+        updateProgress();
+    }
+
+    function updateProgress() {
+        const fill = document.getElementById("progress-fill");
+        const percent = (currentStep / (questions.length - 1)) * 100;
+        fill.style.width = `${percent}%`;
+
+        for(let i = 0; i < questions.length; i++) {
+            const dot = document.getElementById(`dot-${i}`);
+            dot.classList.remove("active", "completed");
+            
+            if (i < currentStep) {
+                dot.classList.add("completed");
+            } else if (i === currentStep) {
+                dot.classList.add("active");
+            }
+        }
+
+        const backBtn = document.getElementById("back-btn");
+        if (currentStep === 0) {
+            backBtn.style.visibility = "hidden";
+        } else {
+            backBtn.style.visibility = "visible";
+        }
+    }
+
+    function loadQuestion() {
+        const q = questions[currentStep];
+        document.getElementById("question").innerText = q.text;
+        
+        const answersDiv = document.getElementById("answers");
+        answersDiv.innerHTML = "";
+        
+        q.options.forEach((opt, index) => {
+            const btn = document.createElement("button");
+            btn.className = "btn";
+            btn.innerText = opt.text;
+            btn.style.animation = `fadeIn 0.3s ease forwards ${index * 0.1}s`;
+            btn.style.opacity = "0"; 
+            
+            btn.onclick = () => {
+                scoreHistory.push(opt.scores);
+                for (let key in opt.scores) {
+                    userScores[key] = (userScores[key] || 0) + opt.scores[key];
+                }
+                nextStep();
+            };
+            answersDiv.appendChild(btn);
+        });
+
+        updateProgress();
+    }
+
+    function nextStep() {
+        if (currentStep < questions.length - 1) {
+            currentStep++;
+            loadQuestion();
+        } else {
+            currentStep++; 
+            updateProgress();
+            setTimeout(showResult, 400);
+        }
+    }
+
+    function prevStep() {
+        if (currentStep > 0) {
+            currentStep--;
+            const lastAddedScores = scoreHistory.pop();
+            if (lastAddedScores) {
+                for (let key in lastAddedScores) {
+                    userScores[key] -= lastAddedScores[key];
+                }
+            }
+            loadQuestion();
+        }
+    }
+
+    function showResult() {
+        document.getElementById("quiz-container").style.display = "none";
+        document.getElementById("result-container").style.display = "block";
+
+        let maxScore = -1;
+        let winner = "concept"; 
+        
+        for (let role in userScores) {
+            if (userScores[role] > maxScore) {
+                maxScore = userScores[role];
+                winner = role;
+            }
+        }
+
+        const res = resultsData[winner];
+        document.getElementById("result-role").innerText = res.title;
+        document.getElementById("result-text").innerText = res.desc;
+    }
+
+    initProgress();
+    loadQuestion();
+</script>
+
+</body>
+</html>
