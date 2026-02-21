@@ -3,17 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Тест: Твой Художественный Архетип</title>
+    <title>Тест: Какой ты тип художника?</title>
     <style>
         :root {
-            --primary-color: #f472b6; /* Розовый неон */
-            --bg-color: #1a1025;      /* Глубокий фиолетовый фон */
-            --card-color: #2e1a3d;    /* Карточки */
-            --text-color: #fce7f3;
-            --accent-blue: #60a5fa;
-            --accent-green: #34d399;
-            --accent-yellow: #fbbf24;
-            --accent-purple: #c084fc;
+            --primary-color: #d946ef; /* Неоновый фиолетовый */
+            --bg-color: #0f172a;
+            --card-color: #1e293b;
+            --text-color: #f1f5f9;
+            --accent-blue: #0ea5e9;
+            --accent-green: #10b981;
+            --accent-orange: #f97316;
         }
 
         body {
@@ -27,22 +26,21 @@
             margin: 0;
             padding: 20px;
             box-sizing: border-box;
-            background-image: radial-gradient(circle at 50% 0%, #4c1d95 0%, #1a1025 70%);
         }
 
         .container {
             background-color: var(--card-color);
             padding: 2.5rem;
             border-radius: 24px;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
-            max-width: 750px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+            max-width: 650px; 
             width: 100%;
             text-align: center;
             position: relative;
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.05);
             transition: all 0.5s ease;
         }
 
@@ -63,7 +61,7 @@
         }
 
         .start-title {
-            font-size: 38px;
+            font-size: 36px;
             font-weight: 800;
             margin-bottom: 15px;
             background: linear-gradient(90deg, #fff, var(--primary-color));
@@ -73,14 +71,14 @@
         }
 
         .start-desc {
-            font-size: 17px;
-            color: #d8b4fe;
+            font-size: 16px;
+            color: #94a3b8;
             margin-bottom: 30px;
-            max-width: 450px;
+            max-width: 400px;
             line-height: 1.6;
         }
 
-        /* INPUT */
+        /* ВВОД НИКА */
         .input-group {
             position: relative;
             margin-bottom: 30px;
@@ -90,83 +88,269 @@
             align-items: center;
             gap: 10px;
         }
-        .tg-input-wrapper { position: relative; flex-grow: 1; display: flex; align-items: center; }
-        .tg-at-symbol { position: absolute; left: 15px; color: #a78bfa; font-size: 18px; pointer-events: none; }
+
+        .tg-input-wrapper {
+            position: relative;
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+        }
+
+        .tg-at-symbol {
+            position: absolute;
+            left: 15px;
+            color: #64748b;
+            font-size: 18px;
+            font-weight: 600;
+            pointer-events: none;
+        }
+
         .tg-input {
-            width: 100%; padding: 15px 15px 15px 35px; border-radius: 12px;
-            border: 2px solid #581c87; background-color: #1e1b4b; color: #fff;
-            font-size: 16px; outline: none; transition: 0.3s;
+            width: 100%;
+            padding: 15px 15px 15px 35px;
+            border-radius: 12px;
+            border: 2px solid #334155;
+            background-color: #0f172a;
+            color: #fff;
+            font-size: 16px;
+            outline: none;
+            transition: 0.3s;
         }
-        .tg-input:focus { border-color: var(--primary-color); box-shadow: 0 0 15px rgba(244, 114, 182, 0.2); }
+
+        .tg-input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 10px rgba(217, 70, 239, 0.2);
+        }
+        
+        .tg-input.valid {
+            border-color: var(--accent-green);
+            color: var(--accent-green);
+        }
+
         .confirm-btn {
-            background-color: #581c87; color: #d8b4fe; border: none; border-radius: 12px;
-            padding: 15px 20px; font-weight: bold; cursor: not-allowed; transition: 0.3s;
+            background-color: #334155;
+            color: #94a3b8;
+            border: none;
+            border-radius: 12px;
+            padding: 15px 20px;
+            font-weight: bold;
+            cursor: not-allowed;
+            transition: 0.3s;
+            white-space: nowrap;
         }
-        .confirm-btn.active { background-color: var(--primary-color); color: #fff; cursor: pointer; }
+
+        .confirm-btn.active {
+            background-color: var(--accent-green);
+            color: #0f172a;
+            cursor: pointer;
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
+        }
         
+        .confirm-btn.success {
+            background-color: transparent;
+            color: var(--accent-green);
+            box-shadow: none;
+            cursor: default;
+            font-size: 20px;
+            padding: 0 10px;
+        }
+
         .start-btn {
-            background: #4c1d95; color: #a78bfa; border: none; padding: 20px 60px;
-            border-radius: 50px; font-size: 20px; font-weight: 800; cursor: not-allowed;
-            text-transform: uppercase; letter-spacing: 2px; transition: all 0.3s ease; opacity: 0.5;
+            background: #334155;
+            color: #64748b;
+            border: none;
+            padding: 20px 60px;
+            border-radius: 50px;
+            font-size: 20px;
+            font-weight: 800;
+            cursor: not-allowed;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: all 0.3s ease;
+            opacity: 0.5;
+            pointer-events: none;
         }
+
         .start-btn.ready {
-            background: linear-gradient(135deg, var(--primary-color), #ec4899);
-            color: #fff; cursor: pointer; opacity: 1; animation: pulse-btn 2s infinite;
-            box-shadow: 0 0 25px rgba(236, 72, 153, 0.4);
+            background: linear-gradient(135deg, var(--primary-color), #a21caf);
+            color: #fff;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(217, 70, 239, 0.4);
+            opacity: 1;
+            pointer-events: auto;
+            animation: pulse-btn 2s infinite;
         }
-        .start-btn.ready:hover { transform: scale(1.05); }
 
-        /* PROGRESS & QUESTIONS */
+        .start-btn.ready:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 35px rgba(217, 70, 239, 0.6);
+        }
+
+        /* ВОПРОСЫ */
         #quiz-container { display: none; }
+        
         .progress-container { margin-bottom: 30px; }
-        .progress-track { background-color: #4c1d95; height: 6px; border-radius: 3px; overflow: hidden; }
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            color: #94a3b8;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        .progress-track {
+            background-color: #334155;
+            height: 6px;
+            border-radius: 3px;
+            overflow: hidden;
+        }
         .progress-fill {
-            background: linear-gradient(90deg, var(--primary-color), #fff); height: 100%; width: 0%;
-            transition: width 0.5s ease; box-shadow: 0 0 15px var(--primary-color);
+            background: linear-gradient(90deg, var(--primary-color), #fff);
+            height: 100%;
+            width: 0%;
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 0 15px var(--primary-color);
         }
-        
-        h2 { color: #fff; margin-bottom: 30px; font-size: 22px; font-weight: 700; min-height: 60px; display: flex; align-items: center; justify-content: center; }
-        
+
+        h2 { 
+            color: #fff; 
+            margin-bottom: 25px; 
+            font-size: 20px;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1.5;
+            font-weight: 700;
+        }
+
+        .answers-box {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
         .btn {
-            background-color: #4c1d95; padding: 18px 22px; border: 1px solid transparent;
-            color: #e9d5ff; border-radius: 14px; cursor: pointer; transition: all 0.2s ease;
-            font-size: 16px; text-align: left; font-weight: 500; margin-bottom: 12px; width: 100%;
+            background-color: #334155;
+            padding: 18px 22px;
+            border: 1px solid transparent;
+            color: #e2e8f0;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 15px;
+            text-align: left;
+            font-weight: 500;
+            line-height: 1.4;
+            position: relative;
         }
-        .btn:hover { background-color: #5b21b6; border-color: var(--primary-color); color: #fff; transform: translateY(-2px); }
+        .btn:hover {
+            background-color: #475569;
+            border-color: var(--primary-color);
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(217, 70, 239, 0.1);
+        }
+        .btn:active { transform: scale(0.99); }
 
-        /* RESULTS */
-        .result-box { display: none; animation: slideUp 0.6s ease; text-align: left; }
-        .result-header-center { text-align: center; margin-bottom: 30px; }
-        .result-icon { font-size: 70px; margin-bottom: 10px; display: inline-block; animation: float 3s infinite; }
-        .result-label { text-transform: uppercase; letter-spacing: 2px; font-size: 12px; color: var(--primary-color); font-weight: 800; }
-        .result-title { font-size: 32px; font-weight: 800; color: #fff; margin-top: 5px; }
-        
-        .quote-box {
-            font-style: italic; color: #d8b4fe; border-left: 3px solid var(--primary-color);
-            padding-left: 15px; margin: 0 auto 30px; max-width: 90%; text-align: left; font-size: 16px;
+        .back-btn {
+            background: none;
+            border: none;
+            color: #64748b;
+            cursor: pointer;
+            padding: 12px 0;
+            font-size: 14px;
+            align-self: flex-start;
+            margin-top: 20px;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            visibility: hidden;
+        }
+        .back-btn:hover { color: var(--primary-color); }
+
+        /* РЕЗУЛЬТАТЫ */
+        .result-box {
+            display: none;
+            animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            text-align: left;
+        }
+        .result-header-center { text-align: center; margin-bottom: 25px; }
+        .result-icon {
+            font-size: 60px;
+            margin-bottom: 10px;
+            display: inline-block;
+            animation: pulse 3s infinite;
+        }
+        .result-label {
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 11px;
+            color: var(--primary-color);
+            font-weight: 800;
+            opacity: 0.8;
+        }
+        .result-title {
+            font-size: 28px;
+            font-weight: 800;
+            color: #fff;
+            line-height: 1.2;
+            margin-top: 5px;
         }
 
-        .res-section { margin-bottom: 20px; padding: 25px; background: rgba(0,0,0,0.2); border-radius: 16px; border-left: 4px solid transparent; }
-        
+        .res-section {
+            margin-bottom: 20px;
+            padding: 20px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 12px;
+            border-left: 3px solid transparent;
+        }
         .res-section.psycho { border-color: var(--primary-color); }
-        .res-section.superpowers { border-color: var(--accent-blue); background: rgba(96, 165, 250, 0.05); }
-        .res-section.risks { border-color: var(--accent-yellow); background: rgba(251, 191, 36, 0.05); }
-        .res-section.advice { border-color: var(--accent-green); background: rgba(52, 211, 153, 0.05); }
+        .res-section.risks { 
+            border-color: var(--accent-orange); 
+            background: rgba(249, 115, 22, 0.05);
+        }
+        .res-section.advice { 
+            border-color: var(--accent-green); 
+            background: rgba(16, 185, 129, 0.05);
+        }
 
-        .res-title { font-size: 13px; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
-        .res-text { font-size: 16px; line-height: 1.6; color: #e9d5ff; }
-        .res-text ul { padding-left: 20px; margin: 10px 0; }
-        .res-text li { margin-bottom: 8px; }
-        .res-text b { color: #fff; }
+        .res-title {
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .res-text {
+            font-size: 15px;
+            line-height: 1.6;
+            color: #cbd5e1;
+        }
 
         .restart-btn {
-            background: linear-gradient(135deg, var(--primary-color), #ec4899); color: #fff;
-            border: none; font-weight: 800; text-align: center; font-size: 16px; text-transform: uppercase;
-            letter-spacing: 1px; padding: 20px; width: 100%; border-radius: 14px; margin-top: 15px; cursor: pointer;
+            background: linear-gradient(135deg, var(--primary-color), #a21caf);
+            color: #fff;
+            border: none;
+            font-weight: 800;
+            text-align: center;
+            font-size: 16px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 18px;
+            width: 100%;
+            border-radius: 14px;
+            margin-top: 10px;
+            cursor: pointer;
         }
-        .restart-btn:hover { box-shadow: 0 0 25px rgba(236, 72, 153, 0.3); transform: translateY(-2px); }
-
-        .back-btn { background: none; border: none; color: #a78bfa; cursor: pointer; padding: 12px 0; visibility: hidden; }
+        .restart-btn:hover {
+            box-shadow: 0 0 25px rgba(217, 70, 239, 0.3);
+            transform: translateY(-2px);
+        }
 
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes slideUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
@@ -176,35 +360,39 @@
 </head>
 <body>
 
-<!-- ЭКРАН 1: ВХОД -->
+<!-- ЭКРАН 1: ОБЛОЖКА -->
 <div class="container" id="start-screen">
     <div class="start-screen">
         <div class="start-icon">🎨</div>
-        <div class="start-title">Какой ты художник?</div>
-        <div class="start-desc">Визионер, Виртуоз или Маг Хаоса? Узнай свой творческий архетип, сильные стороны и скрытые риски.</div>
+        <div class="start-title">Какой ты<br>тип художника?</div>
+        <div class="start-desc">Узнай свой творческий архетип. Кто ты: безумный визионер, скрупулезный реалист или создатель новых миров?</div>
         
         <div class="input-group">
             <div class="tg-input-wrapper">
                 <span class="tg-at-symbol">@</span>
-                <input type="text" class="tg-input" id="tg-username" placeholder="твой_ник" maxlength="32" oninput="validateInput()">
+                <input type="text" class="tg-input" id="tg-username" placeholder="telegram_nick" maxlength="32" oninput="validateInput()">
             </div>
             <button class="confirm-btn" id="confirm-btn" onclick="confirmTelegram()">OK</button>
         </div>
 
-        <button class="start-btn" id="start-quiz-btn" onclick="startQuiz()">Начать тест</button>
+        <button class="start-btn" id="start-quiz-btn" onclick="startQuiz()">Начать</button>
     </div>
 </div>
 
 <!-- ЭКРАН 2: ТЕСТ -->
 <div class="container" id="quiz-container">
     <div class="progress-container">
+        <div class="progress-header">
+            <span id="progress-text">Вопрос 1 из 10</span>
+            <span id="progress-percent">0%</span>
+        </div>
         <div class="progress-track">
             <div class="progress-fill" id="progress-fill"></div>
         </div>
     </div>
 
-    <h2 id="question">Вопрос...</h2>
-    <div id="answers"></div>
+    <h2 id="question">Загрузка...</h2>
+    <div id="answers" class="answers-box"></div>
 
     <button class="back-btn" id="back-btn" onclick="prevStep()">← Назад</button>
 </div>
@@ -213,164 +401,43 @@
 <div class="container result-box" id="result-container">
     <div class="result-header-center">
         <div class="result-icon" id="result-emoji">✨</div>
-        <div class="result-label">Твоя творческая сущность</div>
+        <div class="result-label">Твой творческий архетип</div>
         <div class="result-title" id="result-role">Роль</div>
     </div>
-    
-    <div class="quote-box" id="result-quote"></div>
 
     <div class="res-section psycho">
-        <div class="res-title" style="color: var(--primary-color);">🧠 Кто ты есть</div>
+        <div class="res-title" style="color: var(--primary-color);">Профиль и Суперсилы</div>
         <div class="res-text" id="res-psycho"></div>
     </div>
 
-    <div class="res-section superpowers">
-        <div class="res-title" style="color: var(--accent-blue);">💎 Твои суперсилы</div>
-        <div class="res-text" id="res-superpowers"></div>
-    </div>
-
     <div class="res-section risks">
-        <div class="res-title" style="color: var(--accent-yellow);">⚠️ Ловушки и Риски</div>
+        <div class="res-title" style="color: var(--accent-orange);">Зоны риска</div>
         <div class="res-text" id="res-risks"></div>
     </div>
 
     <div class="res-section advice">
-        <div class="res-title" style="color: var(--accent-green);">🚀 Совет для роста</div>
+        <div class="res-title" style="color: var(--accent-green);">Практический совет</div>
         <div class="res-text" id="res-advice"></div>
     </div>
 
-    <button class="btn restart-btn" onclick="location.reload()">Пройти заново</button>
+    <button class="btn restart-btn" onclick="location.reload()">Начать заново</button>
 </div>
 
 <script>
-    // Ссылка на Google Script (Оставь как есть или замени)
-    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxnEMxxr7RwuMKXU2E0_oHhDUyaXs4kyY2XmL0cVEvvj133fknLzeq-uNtID1TMSlTf7g/exec";
+    // === ВСТАВЬ СЮДА СВОЮ ССЫЛКУ ИЗ ПЕРВОГО ТЕСТА ===
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby6zI-h-JUho1OmIzzQCCh7ra0aKBtIj_PXcBbRx-2wx0DgiLOYOR1qaa8mTPBBzPBTgg/exec";
     
+    // === ИМЯ ЛИСТА В ТАБЛИЦЕ (СКРИПТ САМ СОЗДАСТ ЕГО) ===
+    const SHEET_NAME = "Artist_Archetype_Test"; 
+
     let telegramNick = "";
-    let currentStep = 0;
-    
-    // Архетипы:
-    // virtuoso - Виртуоз (Техника, детали)
-    // chaos - Маг Хаоса (Эмоции, экспрессия)
-    // story - Сказочник (Идея, лор, концепт)
-    // innovator - Инноватор (Эксперименты, новые медиа)
 
-    let userScores = { virtuoso: 0, chaos: 0, story: 0, innovator: 0 };
-    let scoreHistory = [];
-    let userAnswers = [];
-
-    // === ВОПРОСЫ ===
-    const questions = [
-        {
-            text: "Ты начинаешь новую работу. Что лежит перед тобой (или открыто на экране)?",
-            options: [
-                { text: "Четкий план, референсы анатомии и настроенные кисти.", scores: { virtuoso: 3 } },
-                { text: "Пустой холст и желание выплеснуть то, что накопилось внутри.", scores: { chaos: 3 } },
-                { text: "Заметки с историей персонажа и описание мира.", scores: { story: 3 } },
-                { text: "Новая программа или техника, которую я еще не пробовал.", scores: { innovator: 3 } }
-            ]
-        },
-        {
-            text: "Ты допустил ошибку в пропорциях или цвете. Твоя реакция?",
-            options: [
-                { text: "Исправлю немедленно. Это режет мне глаза.", scores: { virtuoso: 2 } },
-                { text: "Оставлю как есть. Это не баг, это фича и эмоция!", scores: { chaos: 3 } },
-                { text: "Если это не мешает считывать сюжет, то плевать.", scores: { story: 2 } },
-                { text: "Превращу пятно в новый элемент. Глитч-арт, погнали!", scores: { innovator: 2 } }
-            ]
-        },
-        {
-            text: "Что для тебя самое страшное в творчестве?",
-            options: [
-                { text: "Сделать криво, анатомически неверно, дилетантски.", scores: { virtuoso: 3 } },
-                { text: "Потерять вдохновение и делать «сухие», бездушные работы.", scores: { chaos: 3 } },
-                { text: "Когда работу посмотрели, но не поняли смысл, который я вложил.", scores: { story: 3 } },
-                { text: "Застрять в одном стиле и рисовать одно и то же годами.", scores: { innovator: 3 } }
-            ]
-        },
-        {
-            text: "Твой идеальный комплимент от зрителя:",
-            options: [
-                { text: "«Как ты это сделал?! Техника просто невероятная!»", scores: { virtuoso: 3 } },
-                { text: "«Я прямо чувствую эту боль/радость через экран».", scores: { chaos: 3 } },
-                { text: "«Я хочу узнать, что случилось с этим героем дальше».", scores: { story: 3 } },
-                { text: "«Никогда не видел ничего подобного, это взрыв мозга!»", scores: { innovator: 3 } }
-            ]
-        },
-        {
-            text: "Как ты относишься к использованию референсов?",
-            options: [
-                { text: "Обязательно. Нужно изучить конструкцию, прежде чем рисовать.", scores: { virtuoso: 3 } },
-                { text: "Иногда мешают. Лучше рисовать из головы и по наитию.", scores: { chaos: 2 } },
-                { text: "Ищу референсы для одежды, эпохи и атмосферы, чтобы мир был логичным.", scores: { story: 3 } },
-                { text: "Беру 10 референсов, смешиваю их нейросетью и коллажирую.", scores: { innovator: 3 } }
-            ]
-        },
-        {
-            text: "Зачем ты вообще творишь?",
-            options: [
-                { text: "Стремлюсь к совершенству и мастерству.", scores: { virtuoso: 2 } },
-                { text: "Это мой способ терапии и общения с миром.", scores: { chaos: 2 } },
-                { text: "Мне тесно в реальности, я строю свои вселенные.", scores: { story: 2 } },
-                { text: "Мне любопытно: «А что будет, если смешать это и это?»", scores: { innovator: 2 } }
-            ]
-        },
-        {
-            text: "Выбери инструмент (метафорически):",
-            options: [
-                { text: "Скальпель. Точность и чистота.", scores: { virtuoso: 2 } },
-                { text: "Огнемет. Ярко, быстро, опасно.", scores: { chaos: 2 } },
-                { text: "Перо летописца. Записать вечность.", scores: { story: 2 } },
-                { text: "Швейцарский нож с лазером. Универсальность.", scores: { innovator: 2 } }
-            ]
-        }
-    ];
-
-    // === РЕЗУЛЬТАТЫ ===
-    const resultsData = {
-        'virtuoso': {
-            title: "💎 Виртуоз / Хранитель Мастерства",
-            icon: "💎",
-            quote: "«Красота в деталях».",
-            psycho: "<p>Ты - перфекционист в лучшем смысле слова. Ты не успокоишься, пока блик на доспехе не будет стоять идеально. Для тебя искусство - это прежде всего <b>дисциплина и наука</b>. Ты видишь структуру там, где другие видят пятна. Твои работы вызывают уважение коллег своей техничностью.</p>",
-            superpowers: "<ul><li><b>Глаз-алмаз:</b> Ты видишь ошибки в пропорциях за километр.</li><li><b>Терпение:</b> Ты можешь рендерить один фрагмент часами.</li><li><b>Фундамент:</b> Твои знания базы нерушимы.</li></ul>",
-            risks: "<ul><li><b>Паралич перфекциониста:</b> Ты можешь никогда не закончить работу, потому что она «недостаточно хороша».</li><li><b>Скука:</b> Иногда за техникой теряется жизнь и эмоция.</li></ul>",
-            advice: "<p>Разреши себе ошибаться. Попробуй сделать «грязный» скетч и запрети себе пользоваться Ctrl+Z в течение 15 минут. <b>Добавь в свою рутину упражнения на скорость:</b> делай наброски по 1-2 минуты, не заботясь о чистоте линии. Это научит мозг фокусироваться на общем, а не на мелочах. <b>Освой смежные экспрессивные техники:</b> поработай с большими текстурными кистями, тушью или даже акварелью, где случайные потеки - часть процесса. Иногда живая кривая линия лучше идеальной мертвой.</p>"
-        },
-        'chaos': {
-            title: "🌪️ Маг Хаоса / Экспрессионист",
-            icon: "🌪️",
-            quote: "«Я не рисую предметы, я рисую то, что я чувствую к ним».",
-            psycho: "<p>Ты - оголенный нерв. Твои работы - это чистое настроение. Тебе плевать на академический штрих, если он не передает ярость или нежность. Ты работаешь на импульсе, быстро, иногда неаккуратно, но всегда <b>честно</b>. Зритель прощает тебе ошибки анатомии за ту энергию, которая бьет с холста.</p>",
-            superpowers: "<ul><li><b>Энергетика:</b> Твои работы цепляют взгляд даже в превью 50x50 пикселей.</li><li><b>Скорость:</b> Ты можешь выдать шедевр за 20 минут на салфетке.</li><li><b>Искренность:</b> Ты не умеешь врать в творчестве.</li></ul>",
-            risks: "<ul><li><b>Нестабильность:</b> Сегодня шедевр, завтра выгорание и апатия.</li><li><b>Отсутствие базы:</b> Иногда классная идея рушится, потому что не хватает техники ее реализовать.</li></ul>",
-            advice: "<p>Изучай базу дозировано, чтобы твои руки успевали за полетом фантазии. <b>Создай 'учебный ритуал':</b> посвящай первые 20 минут каждой творческой сессии одному конкретному упражнению (например, построению кубов в перспективе или штриховке). Это даст опору. <b>Анализируй работы мастеров,</b> которые совмещают экспрессию и технику (например, Эгон Шиле или Фрэнсис Бэкон). Это поможет понять, как база может усилить эмоцию, а не убить ее. <b>Не исправляй 'ошибки' сразу:</b> оставь их, закончи работу, и только потом реши, действительно ли они ее портят.</p>"
-        },
-        'story': {
-            title: "📖 Сказочник / Визионер",
-            icon: "📖",
-            quote: "«Картинка без истории - просто обои».",
-            psycho: "<p>Ты - писатель, который использует краски вместо слов. Техника для тебя вторична, главное - <b>контекст</b>. Ты продумываешь, почему у персонажа шрам, какая погода в этом мире и какая политическая система у орков. Твои работы хочется разглядывать и задавать вопросы.</p>",
-            superpowers: "<ul><li><b>Worldbuilding:</b> Ты создаешь целые вселенные в одной иллюстрации.</li><li><b>Детализация смыслов:</b> Каждая деталь в твоей работе имеет причину.</li><li><b>Интеллект:</b> Твое творчество глубокое и многослойное.</li></ul>",
-            risks: "<ul><li><b>Графомания:</b> Ты можешь так увлечься придумыванием мира, что забудешь его нарисовать.</li><li><b>Перегруженность:</b> Желание впихнуть невпихуемое в один кадр.</li></ul>",
-            advice: "<p>Учись композиции, чтобы управлять вниманием зрителя. <b>Думай как режиссер:</b> разбей свою большую идею на несколько 'кадров' или ключевых сцен. Это научит выделять главное и отсекать лишнее. <b>Изучай язык кино:</b> ракурсы, планы (крупный, средний, общий), цветовые сценарии - все это мощные инструменты повествования. <b>Практикуй 'немой рассказ':</b> попробуй передать простую историю (например, 'персонаж что-то ищет и находит') только через визуал, без пояснений. Это лучший тренажер для сторителлера.</p>"
-        },
-        'innovator': {
-            title: "🧪 Инноватор / Техно-Алхимик",
-            icon: "🧪",
-            quote: "«А что если совместить акварель, 3D и нейросети?»",
-            psycho: "<p>Ты - исследователь. Тебе скучно просто рисовать кистью. Ты первым скачиваешь новые плагины, тестируешь нейросети, мешаешь 2D и 3D. Ты не боишься быть непонятым. Для тебя процесс открытия нового метода важнее, чем финальная картинка.</p>",
-            superpowers: "<ul><li><b>Адаптивность:</b> Ты выживешь в любой индустрии, потому что быстро учишься.</li><li><b>Уникальность:</b> Твой стиль сложно скопировать, это дикая смесь техник.</li><li><b>Смелость:</b> Ты ломаешь правила, потому что знаешь, как они работают.</li></ul>",
-            risks: "<ul><li><b>Синдром сороки:</b> Хватаешься за все блестящее и новое, не углубляясь ни во что.</li><li><b>Зависимость от инструментов:</b> Без любимого софта можешь почувствовать себя беспомощным.</li></ul>",
-            advice: "<p>Попробуй иногда ограничивать себя. Выбери один простой инструмент и выжми из него максимум. <b>Завершай проекты:</b> не просто тестируй новую нейросеть, а создай с ее помощью законченную работу или серию. Это переводит тебя из разряда 'тестировщика' в 'художника'. <b>Стань ментором:</b> заведи блог или канал, где ты делишься своими открытиями. Объясняя что-то другим, ты сам глубже это понимаешь. <b>Устрой себе 'цифровой детокс':</b> неделю рисуй только карандашом на бумаге. Ограничения рождают самые креативные решения.</p>"
-        }
-    };
-
-    // === ФУНКЦИИ ===
     function validateInput() {
         const input = document.getElementById("tg-username");
         const btn = document.getElementById("confirm-btn");
-        if (input.value.trim().length >= 3) {
+        const val = input.value.trim();
+        if (val.startsWith("@")) input.value = val.substring(1);
+        if (input.value.length >= 5) {
             btn.classList.add("active");
             btn.disabled = false;
         } else {
@@ -381,14 +448,138 @@
 
     function confirmTelegram() {
         const input = document.getElementById("tg-username");
-        if (input.value.length >= 3) {
-            telegramNick = input.value.startsWith("@") ? input.value : "@" + input.value;
+        const confirmBtn = document.getElementById("confirm-btn");
+        const startBtn = document.getElementById("start-quiz-btn");
+        if (input.value.length >= 5) {
+            telegramNick = "@" + input.value;
             input.disabled = true;
-            document.getElementById("confirm-btn").innerText = "✓";
-            document.getElementById("start-quiz-btn").classList.add("ready");
-            document.getElementById("start-quiz-btn").disabled = false;
+            input.classList.add("valid");
+            confirmBtn.innerText = "✓";
+            confirmBtn.classList.remove("active");
+            confirmBtn.classList.add("success");
+            confirmBtn.disabled = true;
+            startBtn.classList.add("ready");
         }
     }
+
+    /*
+      АРХЕТИПЫ:
+      - tech_lead: Технарь-Перфекционист (аналог tech)
+      - virtuoso: Экспрессионист (аналог concept/style)
+      - story: Творец Миров (аналог story)
+      - innovator: Инноватор (аналог exp/ai)
+    */
+
+    const questions = [
+        {
+            text: "Перед тобой пустой «холст». Твоя первая мысль?",
+            options: [
+                { text: "Набросаю пару хаотичных пятен, посмотрю, на что похоже (пятна Роршаха).", scores: { virtuoso: 3, innovator: 1 } },
+                { text: "Сначала сетка перспективы и строгие направляющие линии.", scores: { tech_lead: 3 } },
+                { text: "Вспомню историю персонажа или сцены, которую хочу показать.", scores: { story: 3 } },
+                { text: "Начну с поиска крутых форм и силуэтов (шейпов).", scores: { virtuoso: 2, story: 1 } }
+            ]
+        },
+        {
+            text: "Что тебя больше всего бесит в процессе?",
+            options: [
+                { text: "Скучная отрисовка мелких деталей, пуговиц и шнурков.", scores: { virtuoso: 2, story: 1 } },
+                { text: "Когда анатомия «поехала» или перспектива сломалась.", scores: { tech_lead: 3 } },
+                { text: "Когда картинка красивая, но «мертвая» (нет эмоций).", scores: { story: 3 } },
+                { text: "Необходимость следовать правилам и реализму.", scores: { innovator: 3 } }
+            ]
+        },
+        {
+            text: "Какую папку с референсами ты соберешь перед работой?",
+            options: [
+                { text: "Пару картинок для настроения, остальное из головы.", scores: { virtuoso: 2, innovator: 1 } },
+                { text: "Огромную доску (PureRef): текстуры, материалы, свет, анатомия.", scores: { tech_lead: 3 } },
+                { text: "Кадры из фильмов, позы, выражения лиц, освещение.", scores: { story: 3 } },
+                { text: "Арты любимых художников с крутой стилизацией.", scores: { virtuoso: 3 } }
+            ]
+        },
+        {
+            text: "Работа почти готова. Твои финальные действия?",
+            options: [
+                { text: "Добавлю шум, глитч, хроматику или странный фильтр.", scores: { innovator: 3, virtuoso: 1 } },
+                { text: "Увеличу зум на 500% и доведу до идеала каждый пиксель.", scores: { tech_lead: 3 } },
+                { text: "Поиграю с цветокоррекцией (Color Grading), чтобы усилить драму.", scores: { story: 2, virtuoso: 1 } },
+                { text: "Оставлю как есть, лучше начну что-то новое.", scores: { virtuoso: 2 } }
+            ]
+        },
+        {
+            text: "В чем твоя главная суперсила?",
+            options: [
+                { text: "Я могу генерировать 10 идей в минуту.", scores: { virtuoso: 2, innovator: 1 } },
+                { text: "У меня железное терпение и академическая база.", scores: { tech_lead: 3 } },
+                { text: "Мои персонажи выглядят харизматично и привлекательно.", scores: { virtuoso: 3 } },
+                { text: "Я умею вызывать у зрителя чувства.", scores: { story: 3 } }
+            ]
+        },
+        {
+            text: "Какой инструмент ты выберешь?",
+            options: [
+                { text: "Любой, где можно быстро мазать (Photoshop, Procreate).", scores: { virtuoso: 2 } },
+                { text: "Сложный 3D софт с физически корректным рендером (Maya/Blender).", scores: { tech_lead: 2 } },
+                { text: "Вектор или софт с чистыми линиями.", scores: { tech_lead: 1, virtuoso: 1 } },
+                { text: "Смешаю 3D, фотобаш, AI и рисование поверх.", scores: { innovator: 3 } }
+            ]
+        },
+        {
+            text: "Что важнее: Идеальная анатомия или Крутой стиль?",
+            options: [
+                { text: "Анатомия. Без базы все развалится.", scores: { tech_lead: 3 } },
+                { text: "Стиль. Можно ломать анатомию ради выразительности.", scores: { virtuoso: 3 } },
+                { text: "Главное, чтобы поза читалась и передавала действие.", scores: { story: 2 } },
+                { text: "Важно общее впечатление, а не правила.", scores: { innovator: 2 } }
+            ]
+        },
+        {
+            text: "Если бы ты делал игру, чем бы ты занялся?",
+            options: [
+                { text: "Придумывал бы, как выглядят монстры и локации (Concept).", scores: { virtuoso: 2, innovator: 1 } },
+                { text: "Создавал бы реалистичные ассеты и текстуры (Environment/Prop).", scores: { tech_lead: 2 } },
+                { text: "Рисовал бы спрайты персонажей и UI (2D Art).", scores: { virtuoso: 2 } },
+                { text: "Делал бы раскадровки кат-сцен (Cinematics).", scores: { story: 3 } }
+            ]
+        }
+    ];
+
+    const resultsData = {
+        tech_lead: { 
+            title: "Технарь-Перфекционист", 
+            icon: "💎",
+            psycho: "Ты — инженер искусства. Пока другие работают по наитию, ты выстраиваешь железный пайплайн. Для тебя искусство — это математика, физика света и строгая дисциплина. Твои работы — эталон технического качества.<br><br><b>Суперсилы:</b><br>• Глаз-рентген: Видишь малейшие ошибки.<br>• Выносливость: Готов часами выводить фаски.<br>• Железобетонная база.",
+            risks: "• «Страх кнопки рендера»: Бесконечная полировка.<br>• Стерильность: Работа может стать «пластиковой».",
+            advice: "<b>Внедряй правило фокусной точки:</b> Детализируй главное, остальное — мазками.<br><b>Практикуй осознанную грязь:</b> Добавляй шум и гранж.<br><b>Таймбоксинг:</b> Ставь таймер на скетч и запрети Ctrl+Z."
+        },
+        virtuoso: { 
+            title: "Виртуоз / Хранитель Души", 
+            icon: "🌪️",
+            psycho: "Ты — оголенный нерв. Твоя сила — в страсти и самовыражении. Тебе плевать на правильную сетку, если в кадре нет драйва. Зритель прощает тебе косяки анатомии за ту энергию, которая бьет с экрана.<br><br><b>Суперсилы:</b><br>• Творческая искра и смелость.<br>• Импульс: Можешь набросать шедевр за 20 минут.<br>• Эмпатия к зрителю.",
+            risks: "• Эмоциональные качели и выгорание.<br>• Конфликт с рутиной («Завод по штамповке»).<br>• Страх финализации из-за нехватки тех. базы.",
+            advice: "<b>Раздели ремесло и искусство:</b> Делай пет-проекты без рамок для души.<br><b>Геймифицируй:</b> Участвуй в быстрых челленджах.<br><b>Найди путеводитель:</b> Опирайся на менторов в сложной техничке."
+        },
+        story: { 
+            title: "Творец Миров / Сторителлер", 
+            icon: "📖",
+            psycho: "Ты — режиссер. Картинка без истории для тебя — пустые пиксели. Ты продумываешь лор: откуда шрам, почему броня потерта. Твои работы хочется разглядывать и читать.<br><br><b>Суперсилы:</b><br>• Глубокое миростроение (Worldbuilding).<br>• Осознанная детализация (всё имеет смысл).<br>• Потенциал Арт-директора.",
+            risks: "• Проклятие амбиций: Идеи масштабнее ресурсов.<br>• Визуальная графомания: Слишком много деталей.<br>• Травма конвейера: Невозможность рассказать свою историю.",
+            advice: "<b>Режиссура вместо каши:</b> Веди глаз зрителя светом и композицией.<br><b>Убей мега-проект:</b> Делай серию маленьких кадров, а не ААА-игру в одиночку.<br><b>Целься в ниши:</b> Level Art, Concept Art."
+        },
+        innovator: { 
+            title: "Инноватор / Нейро-Алхимик", 
+            icon: "🧪",
+            psycho: "Ты — исследователь на острие. Тебе скучно в классике. Ты первым тестируешь нейронки, мешаешь 2D, 3D и код. Взлом технологий для тебя интереснее, чем сам результат.<br><br><b>Суперсилы:</b><br>• Абсолютная адаптивность: Выживешь в любой кризис.<br>• Уникальный гибридный стиль.<br>• Технологическая смелость.",
+            risks: "• Синдром сороки: Хватаешься за всё, не углубляясь.<br>• Технологическая зависимость.<br>• Отчуждение от консерваторов.",
+            advice: "<b>Монетизируй хаос:</b> Упакуй свои эксперименты в пайплайны для студий.<br><b>Прокачай арт-базу:</b> Чтобы не быть рабом кнопки, учи композицию.<br><b>Стань евангелистом:</b> Обучай других новым методам."
+        }
+    };
+
+    let currentStep = 0;
+    let userScores = { tech_lead: 0, virtuoso: 0, story: 0, innovator: 0 };
+    let scoreHistory = [];
+    let userAnswers = [];
 
     function startQuiz() {
         document.getElementById("start-screen").style.display = "none";
@@ -396,34 +587,51 @@
         loadQuestion();
     }
 
+    function updateProgress() {
+        const fill = document.getElementById("progress-fill");
+        const text = document.getElementById("progress-text");
+        const percentText = document.getElementById("progress-percent");
+        
+        const percent = Math.round((currentStep / questions.length) * 100);
+        
+        fill.style.width = `${percent}%`;
+        text.innerText = `Вопрос ${currentStep + 1} из ${questions.length}`;
+        percentText.innerText = `${percent}%`;
+
+        const backBtn = document.getElementById("back-btn");
+        if (currentStep === 0) {
+            backBtn.style.visibility = "hidden";
+        } else {
+            backBtn.style.visibility = "visible";
+        }
+    }
+
     function loadQuestion() {
         const q = questions[currentStep];
         document.getElementById("question").innerText = q.text;
+        
         const answersDiv = document.getElementById("answers");
         answersDiv.innerHTML = "";
         
-        // Progress bar
-        const percent = Math.round((currentStep / questions.length) * 100);
-        document.getElementById("progress-fill").style.width = `${percent}%`;
-
-        // Back button visibility
-        document.getElementById("back-btn").style.visibility = currentStep > 0 ? "visible" : "hidden";
-
         q.options.forEach((opt, index) => {
             const btn = document.createElement("button");
             btn.className = "btn";
             btn.innerText = opt.text;
+            btn.style.animation = `slideUp 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards ${index * 0.07}s`;
+            btn.style.opacity = "0"; 
+            
             btn.onclick = () => {
                 scoreHistory.push(opt.scores);
                 userAnswers.push(opt.text);
-                for (let key in opt.scores) { userScores[key] += opt.scores[key]; }
+                for (let key in opt.scores) {
+                    userScores[key] = (userScores[key] || 0) + opt.scores[key];
+                }
                 nextStep();
             };
-            // Animation delay
-            btn.style.animation = `slideUp 0.4s ease forwards ${index * 0.1}s`;
-            btn.style.opacity = "0"; 
             answersDiv.appendChild(btn);
         });
+
+        updateProgress();
     }
 
     function nextStep() {
@@ -432,6 +640,7 @@
             loadQuestion();
         } else {
             document.getElementById("progress-fill").style.width = "100%";
+            document.getElementById("progress-percent").innerText = "100%";
             setTimeout(showResult, 400);
         }
     }
@@ -439,10 +648,12 @@
     window.prevStep = function() {
         if (currentStep > 0) {
             currentStep--;
-            const lastScores = scoreHistory.pop();
+            const lastAddedScores = scoreHistory.pop();
             userAnswers.pop();
-            if (lastScores) {
-                for (let key in lastScores) { userScores[key] -= lastScores[key]; }
+            if (lastAddedScores) {
+                for (let key in lastAddedScores) {
+                    userScores[key] -= lastAddedScores[key];
+                }
             }
             loadQuestion();
         }
@@ -452,28 +663,43 @@
         document.getElementById("quiz-container").style.display = "none";
         document.getElementById("result-container").style.display = "block";
 
-        // Find winner
-        let max = -1;
-        let winner = "virtuoso";
-        for (let key in userScores) {
-            if (userScores[key] > max) {
-                max = userScores[key];
-                winner = key;
+        let maxScore = -1;
+        let winner = "virtuoso"; 
+        
+        for (let role in userScores) {
+            if (userScores[role] > maxScore) {
+                maxScore = userScores[role];
+                winner = role;
             }
         }
 
         const res = resultsData[winner];
         document.getElementById("result-role").innerText = res.title;
         document.getElementById("result-emoji").innerText = res.icon;
-        document.getElementById("result-quote").innerText = res.quote;
+        
         document.getElementById("res-psycho").innerHTML = res.psycho;
-        document.getElementById("res-superpowers").innerHTML = res.superpowers;
         document.getElementById("res-risks").innerHTML = res.risks;
         document.getElementById("res-advice").innerHTML = res.advice;
 
-        // Отправка (скрытая)
+        // ОТПРАВКА С ИМЕНЕМ ЛИСТА
+        sendDataToGoogleSheet(telegramNick, winner, userScores, userAnswers);
+    }
+
+    function sendDataToGoogleSheet(telegram, winner, scores, answers) {
+        if (!GOOGLE_SCRIPT_URL.startsWith("http")) return;
+
+        const params = new URLSearchParams({
+            sheetName: SHEET_NAME, // <--- ВАЖНО: ОТПРАВЛЯЕМ ИМЯ ЛИСТА
+            telegram: telegram,
+            role: resultsData[winner].title,
+            scores: JSON.stringify(scores),
+            answers: JSON.stringify(answers),
+            _t: new Date().getTime() 
+        }).toString();
+
         const img = new Image();
-        img.src = `${GOOGLE_SCRIPT_URL}?telegram=${telegramNick}&role=${res.title}&scores=${JSON.stringify(userScores)}`;
+        img.src = GOOGLE_SCRIPT_URL + "?" + params;
+        console.log("Данные отправлены на лист: " + SHEET_NAME);
     }
 </script>
 
