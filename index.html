@@ -429,39 +429,48 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 <script>
-    // Здесь находится ваш основной JavaScript код...
-    // ...
-        // ... здесь находятся все ваши функции: showResult, nextStep и т.д.
 
-    // ▼▼▼ СКОПИРУЙТЕ И ВСТАВЬТЕ ЭТОТ КОД В КОНЕЦ СКРИПТА ▼▼▼
+// --- ФИНАЛЬНАЯ ВЕРСИЯ: ИСПРАВЛЕНИЕ ПРОЗРАЧНОСТИ ---
+function downloadPDF() {
+    const { jsPDF } = window.jspdf;
+    const resultContainer = document.getElementById('result-container');
     
-    // --- Функция для скачивания результатов в PDF ---
-    function downloadPDF() {
-        const { jsPDF } = window.jspdf;
-        const resultContainer = document.getElementById('result-container');
-        
-        // Находим кнопки, которые нужно временно скрыть
-        const restartBtn = resultContainer.querySelector('.restart-btn');
-        const downloadBtn = document.getElementById('download-pdf-btn');
+    const restartBtn = resultContainer.querySelector('.restart-btn');
+    const downloadBtn = document.getElementById('download-pdf-btn');
 
-        // Прячем их
-        restartBtn.style.display = 'none';
-        downloadBtn.style.display = 'none';
+    // Прячем кнопки, чтобы не попали в PDF
+    restartBtn.style.display = 'none';
+    downloadBtn.style.display = 'none';
+    
+    // ▼▼▼ ГЛАВНОЕ ИЗМЕНЕНИЕ: МЫ СОЗДАЁМ НОВЫЙ "ЧИСТЫЙ" CANVAS ▼▼▼
+    const canvas = document.createElement('canvas');
+    canvas.width = resultContainer.offsetWidth * 4; // Умножаем на 4 для высокого качества
+    canvas.height = resultContainer.offsetHeight * 4;
+    const context = canvas.getContext('2d');
+    
+    // Заливаем наш новый canvas плотным, непрозрачным цветом фона
+    context.fillStyle = '#2e1a3d';
+    context.fillRect(0, 0, canvas.width, canvas.height);
+    
+    // Прокручиваем страницу для корректного "фотографирования"
+    window.scrollTo(0, resultContainer.offsetTop);
 
-        // Делаем "снимок" блока с результатами
+    setTimeout(() => {
+        // Теперь "фотографируем" содержимое, но используем НАШ подготовленный canvas
         html2canvas(resultContainer, {
-            scale: 2, // Увеличиваем разрешение для четкости
-            backgroundColor: getComputedStyle(document.body).getPropertyValue('--card-color'), // Задаем фон, чтобы не был прозрачным
-            useCORS: true
-        }).then(canvas => {
-            const imgData = canvas.toDataURL('image/png');
+            canvas: canvas, // <--- Указываем использовать наш canvas
+            scale: 4,       // <--- Масштабируем содержимое под него
+            useCORS: true,
+            scrollY: 0,
+            backgroundColor: null // Фоном теперь управляет наш canvas
+        }).then(finalCanvas => {
+            const imgData = finalCanvas.toDataURL('image/png');
             const pdf = new jsPDF('p', 'mm', 'a4');
             const pdfWidth = pdf.internal.pageSize.getWidth();
             const pdfHeight = pdf.internal.pageSize.getHeight();
-            const ratio = canvas.width / canvas.height;
+            const ratio = finalCanvas.width / finalCanvas.height;
             
-            // Рассчитываем размеры изображения, чтобы оно вписалось в страницу A4 с отступами
-            let imgPdfWidth = pdfWidth - 20; 
+            let imgPdfWidth = pdfWidth - 20;
             let imgPdfHeight = imgPdfWidth / ratio;
             
             if (imgPdfHeight > pdfHeight - 20) {
@@ -469,27 +478,26 @@
                 imgPdfWidth = imgPdfHeight * ratio;
             }
 
-            // Центрируем изображение
             const x = (pdfWidth - imgPdfWidth) / 2;
             const y = 10;
 
             pdf.addImage(imgData, 'PNG', x, y, imgPdfWidth, imgPdfHeight);
             
-            // Возвращаем кнопки обратно
+            // Возвращаем кнопки
             restartBtn.style.display = 'block';
             downloadBtn.style.display = 'block';
 
-            // Предлагаем сохранить файл
             pdf.save('Какой ты художник - Результаты.pdf');
         }).catch(err => {
             console.error("Ошибка при создании PDF:", err);
-            // Возвращаем кнопки, даже если произошла ошибка
             restartBtn.style.display = 'block';
             downloadBtn.style.display = 'block';
         });
-    }
+    }, 100);
+}
 
-</script> <!-- Это закрывающий тег вашего скрипта -->
+
+</script>
 
 </script>
 
@@ -497,10 +505,9 @@
 </html>
 
 <script>
-    // === ВСТАВЬ СЮДА ССЫЛКУ ИЗ ПЕРВОГО ТЕСТА ===
+
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxnEMxxr7RwuMKXU2E0_oHhDUyaXs4kyY2XmL0cVEvvj133fknLzeq-uNtID1TMSlTf7g/exec";
     
-    // === ИМЯ ЛИСТА В ТАБЛИЦЕ (СКРИПТ САМ СОЗДАСТ ЕГО) ===
     const SHEET_NAME = "Artist_Archetype_Test"; 
 
     let telegramNick = "";
