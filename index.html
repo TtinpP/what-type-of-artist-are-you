@@ -430,7 +430,7 @@
 
 <script>
 
-// --- ФИНАЛЬНАЯ ВЕРСИЯ: ИСПРАВЛЕНИЕ ПРОЗРАЧНОСТИ И ТУСКЛЫХ ЦВЕТОВ ---
+// --- ФИНАЛЬНАЯ ВЕРСИЯ: "ЗАЛИВКА" PDF-СТРАНИЦЫ ---
 function downloadPDF() {
     const { jsPDF } = window.jspdf;
     const resultContainer = document.getElementById('result-container');
@@ -438,45 +438,30 @@ function downloadPDF() {
     const restartBtn = resultContainer.querySelector('.restart-btn');
     const downloadBtn = document.getElementById('download-pdf-btn');
 
-    // Прячем кнопки, чтобы не попали в PDF
+    // Прячем кнопки
     restartBtn.style.display = 'none';
     downloadBtn.style.display = 'none';
 
-    // Даём браузеру мгновение, чтобы скрыть кнопки
     setTimeout(() => {
+        // "Фотографируем" результат БЕЗ фона
         html2canvas(resultContainer, {
-            scale: 3, // Высокое качество
-            useCORS: true,
-
-            // ▼▼▼ ГЛАВНОЕ ИЗМЕНЕНИЕ ▼▼▼
-            // Мы явно говорим, что у элемента НЕТ фона,
-            // чтобы он не пытался его обработать и не создавал прозрачность.
-            // Вместо этого мы сделаем фон вручную на следующем шаге.
-            backgroundColor: null
-
+            scale: 3,
+            backgroundColor: null, // Гарантированно прозрачный фон
+            useCORS: true
         }).then(canvas => {
-            // Создаём новый, "чистый" холст (canvas)
-            const finalCanvas = document.createElement('canvas');
-            finalCanvas.width = canvas.width;
-            finalCanvas.height = canvas.height;
-            const context = finalCanvas.getContext('2d');
-
-            // 1. Заливаем наш новый холст плотным, НЕПРОЗРАЧНЫМ цветом
-            context.fillStyle = '#2e1a3d';
-            context.fillRect(0, 0, finalCanvas.width, finalCanvas.height);
-
-            // 2. Рисуем поверх этого фона наше "фото" с результатами
-            context.drawImage(canvas, 0, 0);
-
-            // Теперь у нас есть гарантированно непрозрачное изображение
-            const imgData = finalCanvas.toDataURL('image/png');
-            
-            // --- Дальше всё как обычно ---
+            const imgData = canvas.toDataURL('image/png');
             const pdf = new jsPDF('p', 'mm', 'a4');
             const pdfWidth = pdf.internal.pageSize.getWidth();
             const pdfHeight = pdf.internal.pageSize.getHeight();
-            const ratio = finalCanvas.width / finalCanvas.height;
             
+            // ▼▼▼ ГЛАВНОЕ ИЗМЕНЕНИЕ ▼▼▼
+            // 1. Устанавливаем цвет заливки для PDF
+            pdf.setFillColor('#2e1a3d'); 
+            // 2. Рисуем прямоугольник, который покрывает всю страницу
+            pdf.rect(0, 0, pdfWidth, pdfHeight, 'F'); // 'F' значит "Fill" (Залить)
+
+            // --- Теперь добавляем наше изображение поверх этой заливки ---
+            const ratio = canvas.width / canvas.height;
             let imgPdfWidth = pdfWidth - 20;
             let imgPdfHeight = imgPdfWidth / ratio;
             
@@ -488,6 +473,7 @@ function downloadPDF() {
             const x = (pdfWidth - imgPdfWidth) / 2;
             const y = 10;
 
+            // Добавляем саму картинку
             pdf.addImage(imgData, 'PNG', x, y, imgPdfWidth, imgPdfHeight);
             
             // Возвращаем кнопки
