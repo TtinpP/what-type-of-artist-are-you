@@ -430,7 +430,7 @@
 
 <script>
 
-// --- ФИНАЛЬНАЯ ВЕРСИЯ: "ЗАЛИВКА" PDF-СТРАНИЦЫ ---
+// --- ФИНАЛЬНАЯ ВЕРСИЯ: ПРИНУДИТЕЛЬНЫЕ СТИЛИ ---
 function downloadPDF() {
     const { jsPDF } = window.jspdf;
     const resultContainer = document.getElementById('result-container');
@@ -442,26 +442,29 @@ function downloadPDF() {
     restartBtn.style.display = 'none';
     downloadBtn.style.display = 'none';
 
+    // ▼▼▼ ГЛАВНОЕ ИЗМЕНЕНИЕ: ВРЕМЕННО МЕНЯЕМ СТИЛИ ▼▼▼
+    const originalStyle = resultContainer.style.cssText;
+    resultContainer.style.backgroundColor = '#2e1a3d'; // Задаем плотный фон
+    resultContainer.style.color = '#FFFFFF';           // Задаем чисто белый цвет текста
+
     setTimeout(() => {
-        // "Фотографируем" результат БЕЗ фона
         html2canvas(resultContainer, {
             scale: 3,
-            backgroundColor: null, // Гарантированно прозрачный фон
             useCORS: true
         }).then(canvas => {
+            
+            // ▼▼▼ СРАЗУ ВОЗВРАЩАЕМ СТИЛИ ОБРАТНО ▼▼▼
+            resultContainer.style.cssText = originalStyle;
+            restartBtn.style.display = 'block';
+            downloadBtn.style.display = 'block';
+
+            // --- Дальше всё как обычно ---
             const imgData = canvas.toDataURL('image/png');
             const pdf = new jsPDF('p', 'mm', 'a4');
             const pdfWidth = pdf.internal.pageSize.getWidth();
             const pdfHeight = pdf.internal.pageSize.getHeight();
-            
-            // ▼▼▼ ГЛАВНОЕ ИЗМЕНЕНИЕ ▼▼▼
-            // 1. Устанавливаем цвет заливки для PDF
-            pdf.setFillColor('#2e1a3d'); 
-            // 2. Рисуем прямоугольник, который покрывает всю страницу
-            pdf.rect(0, 0, pdfWidth, pdfHeight, 'F'); // 'F' значит "Fill" (Залить)
-
-            // --- Теперь добавляем наше изображение поверх этой заливки ---
             const ratio = canvas.width / canvas.height;
+            
             let imgPdfWidth = pdfWidth - 20;
             let imgPdfHeight = imgPdfWidth / ratio;
             
@@ -473,16 +476,15 @@ function downloadPDF() {
             const x = (pdfWidth - imgPdfWidth) / 2;
             const y = 10;
 
-            // Добавляем саму картинку
             pdf.addImage(imgData, 'PNG', x, y, imgPdfWidth, imgPdfHeight);
             
-            // Возвращаем кнопки
-            restartBtn.style.display = 'block';
-            downloadBtn.style.display = 'block';
-
             pdf.save('Какой ты художник - Результаты.pdf');
+
         }).catch(err => {
             console.error("Ошибка при создании PDF:", err);
+
+            // ▼▼▼ В СЛУЧАЕ ОШИБКИ ТОЖЕ ВОЗВРАЩАЕМ СТИЛИ ▼▼▼
+            resultContainer.style.cssText = originalStyle;
             restartBtn.style.display = 'block';
             downloadBtn.style.display = 'block';
         });
