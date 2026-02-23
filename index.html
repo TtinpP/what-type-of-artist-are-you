@@ -430,7 +430,7 @@
 
 <script>
 
-// --- ФИНАЛЬНАЯ ВЕРСИЯ: ИСПРАВЛЕНИЕ ПРОЗРАЧНОСТИ ---
+// --- ФИНАЛЬНАЯ ВЕРСИЯ: ИСПРАВЛЕНИЕ ПРОЗРАЧНОСТИ И ТУСКЛЫХ ЦВЕТОВ ---
 function downloadPDF() {
     const { jsPDF } = window.jspdf;
     const resultContainer = document.getElementById('result-container');
@@ -441,30 +441,37 @@ function downloadPDF() {
     // Прячем кнопки, чтобы не попали в PDF
     restartBtn.style.display = 'none';
     downloadBtn.style.display = 'none';
-    
-    // ▼▼▼ ГЛАВНОЕ ИЗМЕНЕНИЕ: МЫ СОЗДАЁМ НОВЫЙ "ЧИСТЫЙ" CANVAS ▼▼▼
-    const canvas = document.createElement('canvas');
-    canvas.width = resultContainer.offsetWidth * 4; // Умножаем на 4 для высокого качества
-    canvas.height = resultContainer.offsetHeight * 4;
-    const context = canvas.getContext('2d');
-    
-    // Заливаем наш новый canvas плотным, непрозрачным цветом фона
-    context.fillStyle = '#2e1a3d';
-    context.fillRect(0, 0, canvas.width, canvas.height);
-    
-    // Прокручиваем страницу для корректного "фотографирования"
-    window.scrollTo(0, resultContainer.offsetTop);
 
+    // Даём браузеру мгновение, чтобы скрыть кнопки
     setTimeout(() => {
-        // Теперь "фотографируем" содержимое, но используем НАШ подготовленный canvas
         html2canvas(resultContainer, {
-            canvas: canvas, // <--- Указываем использовать наш canvas
-            scale: 4,       // <--- Масштабируем содержимое под него
+            scale: 3, // Высокое качество
             useCORS: true,
-            scrollY: 0,
-            backgroundColor: null // Фоном теперь управляет наш canvas
-        }).then(finalCanvas => {
+
+            // ▼▼▼ ГЛАВНОЕ ИЗМЕНЕНИЕ ▼▼▼
+            // Мы явно говорим, что у элемента НЕТ фона,
+            // чтобы он не пытался его обработать и не создавал прозрачность.
+            // Вместо этого мы сделаем фон вручную на следующем шаге.
+            backgroundColor: null
+
+        }).then(canvas => {
+            // Создаём новый, "чистый" холст (canvas)
+            const finalCanvas = document.createElement('canvas');
+            finalCanvas.width = canvas.width;
+            finalCanvas.height = canvas.height;
+            const context = finalCanvas.getContext('2d');
+
+            // 1. Заливаем наш новый холст плотным, НЕПРОЗРАЧНЫМ цветом
+            context.fillStyle = '#2e1a3d';
+            context.fillRect(0, 0, finalCanvas.width, finalCanvas.height);
+
+            // 2. Рисуем поверх этого фона наше "фото" с результатами
+            context.drawImage(canvas, 0, 0);
+
+            // Теперь у нас есть гарантированно непрозрачное изображение
             const imgData = finalCanvas.toDataURL('image/png');
+            
+            // --- Дальше всё как обычно ---
             const pdf = new jsPDF('p', 'mm', 'a4');
             const pdfWidth = pdf.internal.pageSize.getWidth();
             const pdfHeight = pdf.internal.pageSize.getHeight();
@@ -495,7 +502,6 @@ function downloadPDF() {
         });
     }, 100);
 }
-
 
 </script>
 
