@@ -422,6 +422,87 @@
 
     <button class="btn restart-btn" onclick="location.reload()">Начать заново</button>
 </div>
+    <!-- ЭКРАН 3: РЕЗУЛЬТАТ -->
+<div class="container result-box" id="result-container">
+    <!-- ... здесь много кода с результатами ... -->
+
+    <button class="btn restart-btn" onclick="location.reload()">Пройти заново</button>
+    
+    <!-- ▼▼▼ СКОПИРУЙТЕ И ВСТАВЬТЕ ЭТУ СТРОКУ ▼▼▼ -->
+    <button id="download-pdf-btn" class="btn restart-btn" style="background: var(--accent-purple); margin-top: 10px;" onclick="downloadPDF()">Скачать результаты в PDF</button>
+    
+</div>
+<!-- Библиотеки для создания PDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+<script>
+    // Здесь находится ваш основной JavaScript код...
+    // ...
+        // ... здесь находятся все ваши функции: showResult, nextStep и т.д.
+
+    // ▼▼▼ СКОПИРУЙТЕ И ВСТАВЬТЕ ЭТОТ КОД В КОНЕЦ СКРИПТА ▼▼▼
+    
+    // --- Функция для скачивания результатов в PDF ---
+    function downloadPDF() {
+        const { jsPDF } = window.jspdf;
+        const resultContainer = document.getElementById('result-container');
+        
+        // Находим кнопки, которые нужно временно скрыть
+        const restartBtn = resultContainer.querySelector('.restart-btn');
+        const downloadBtn = document.getElementById('download-pdf-btn');
+
+        // Прячем их
+        restartBtn.style.display = 'none';
+        downloadBtn.style.display = 'none';
+
+        // Делаем "снимок" блока с результатами
+        html2canvas(resultContainer, {
+            scale: 2, // Увеличиваем разрешение для четкости
+            backgroundColor: getComputedStyle(document.body).getPropertyValue('--card-color'), // Задаем фон, чтобы не был прозрачным
+            useCORS: true
+        }).then(canvas => {
+            const imgData = canvas.toDataURL('image/png');
+            const pdf = new jsPDF('p', 'mm', 'a4');
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const pdfHeight = pdf.internal.pageSize.getHeight();
+            const ratio = canvas.width / canvas.height;
+            
+            // Рассчитываем размеры изображения, чтобы оно вписалось в страницу A4 с отступами
+            let imgPdfWidth = pdfWidth - 20; 
+            let imgPdfHeight = imgPdfWidth / ratio;
+            
+            if (imgPdfHeight > pdfHeight - 20) {
+                imgPdfHeight = pdfHeight - 20;
+                imgPdfWidth = imgPdfHeight * ratio;
+            }
+
+            // Центрируем изображение
+            const x = (pdfWidth - imgPdfWidth) / 2;
+            const y = 10;
+
+            pdf.addImage(imgData, 'PNG', x, y, imgPdfWidth, imgPdfHeight);
+            
+            // Возвращаем кнопки обратно
+            restartBtn.style.display = 'block';
+            downloadBtn.style.display = 'block';
+
+            // Предлагаем сохранить файл
+            pdf.save('Какой ты художник - Результаты.pdf');
+        }).catch(err => {
+            console.error("Ошибка при создании PDF:", err);
+            // Возвращаем кнопки, даже если произошла ошибка
+            restartBtn.style.display = 'block';
+            downloadBtn.style.display = 'block';
+        });
+    }
+
+</script> <!-- Это закрывающий тег вашего скрипта -->
+
+</script>
+
+</body>
+</html>
 
 <script>
     // === ВСТАВЬ СЮДА ССЫЛКУ ИЗ ПЕРВОГО ТЕСТА ===
